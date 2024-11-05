@@ -23,6 +23,17 @@ if [ ! -d "$output_dir" ]; then
     mkdir -p "$output_dir"
 fi
 
+# 检查目录权限，若权限不足则修改权限
+if [ ! -w "$output_dir" ]; then
+    echo "Directory $output_dir is not writable. Changing permissions..."
+    sudo chmod 777 -R "$output_dir"
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to change permissions for $output_dir."
+        exit 1
+    fi
+    echo "Permissions for $output_dir have been changed."
+fi
+
 # 如果目录中没有 Java 文件或文件不存在，才执行 antlr4
 if [ ! -f "$output_dir/Python3Demo*.java" ]; then
     echo "Running antlr4 to generate Java files..."
@@ -36,5 +47,5 @@ if [ ! -f "$output_dir/Python3Demo.class" ]; then
 fi
 
 # 切换到输出目录，然后运行 grun（即 java）命令，并将所有参数传递给它
-echo "Running visualization with arguments: $@"
+echo "Changing directory to $output_dir and running grun with arguments: $@"
 cd "$output_dir" && java -Xmx500M -cp "/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH" org.antlr.v4.gui.TestRig Python3Demo "$@"
