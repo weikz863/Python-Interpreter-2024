@@ -1,7 +1,12 @@
 #!/bin/bash
 
+# Command format: ./visualize.bash [Parser Rule Name] -gui
+# e.g. If you want to see AST for the whole python program, use the following command:
+#     ./visualize.bash file_input -gui
+
 # 在脚本中显式定义 grun alias（如果你仍想使用 alias）
 alias grun='java -Xmx500M -cp "/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH" org.antlr.v4.gui.TestRig'
+export CLASSPATH=".:/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH"
 
 # 检查 antlr4 命令是否存在
 if ! command -v antlr4 &> /dev/null; then
