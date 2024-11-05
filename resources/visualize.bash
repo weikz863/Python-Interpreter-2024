@@ -3,16 +3,9 @@
 # Command format: ./visualize.bash [Parser Rule Name] -gui
 # e.g. If you want to see AST for the whole python program, use the following command:
 #     ./visualize.bash file_input -gui
+# Please ensure that you've already installed ANTLR4 to directory /usr/local/lib/antlr-4.13.1-complete.jar
 
-# 在脚本中显式定义 grun alias（如果你仍想使用 alias）
-alias grun='java -Xmx500M -cp "/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH" org.antlr.v4.gui.TestRig'
 export CLASSPATH=".:/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH"
-
-# 检查 antlr4 命令是否存在
-if ! command -v antlr4 &> /dev/null; then
-    echo "Error: antlr4 command not found."
-    exit 1
-fi
 
 # 检查 Python3Demo.g4 文件是否存在
 if [ ! -f "Python3Demo.g4" ]; then
@@ -42,7 +35,7 @@ fi
 # 如果目录中没有 Java 文件或文件不存在，才执行 antlr4
 if [ ! -f "$output_dir/Python3Demo*.java" ]; then
     echo "Running antlr4 to generate Java files..."
-    antlr4 -o "$output_dir" Python3Demo.g4
+    java -Xmx500M -cp "/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH" org.antlr.v4.Tool -o "$output_dir" Python3Demo.g4
 fi
 
 # 如果 Java 文件不存在，或者 .class 文件不存在，则运行 javac
@@ -52,5 +45,6 @@ if [ ! -f "$output_dir/Python3Demo.class" ]; then
 fi
 
 # 切换到输出目录，然后运行 grun（即 java）命令，并将所有参数传递给它
-echo "Changing directory to $output_dir and running grun with arguments: $@"
+echo "Running grun with arguments: $@"
+echo "All finished! Please type your code below. Type Ctrl+D to end. Enjoy coding~"
 cd "$output_dir" && java -Xmx500M -cp "/usr/local/lib/antlr-4.13.1-complete.jar:$CLASSPATH" org.antlr.v4.gui.TestRig Python3Demo "$@"
