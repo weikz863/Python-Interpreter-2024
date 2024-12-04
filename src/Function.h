@@ -26,9 +26,8 @@ struct FlowControl {
   };
 };
 
-typedef std::vector<std::pair<std::string, rValue>> FunctionParams;
-typedef std::pair<std::string, rValue> FunctionArgument;
-typedef std::vector<FunctionArgument> FuncArgs;
+typedef std::pair<std::string, rValue> Argument;
+typedef std::vector<Argument> FunctionParams;
 
 struct Function {
   FunctionParams parameters;

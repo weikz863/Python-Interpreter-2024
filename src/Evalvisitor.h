@@ -52,7 +52,8 @@ class EvalVisitor : public Python3ParserBaseVisitor {
       ret.emplace_back(std::any_cast<std::string>(visitTfpdef(names[i])), rValue());
     }
     for (size_t i = names.size() - inits.size(); i < names.size(); i++) {
-      ret.emplace_back(std::any_cast<std::string>(visitTfpdef(names[i])), values[i]);
+      ret.emplace_back(std::any_cast<std::string>(visitTfpdef(names[i])), 
+          values[i - (names.size() - inits.size())]);
     }
     return ret;
   }
@@ -363,7 +364,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
   std::any visitAtom_expr(Python3Parser::Atom_exprContext *ctx) override {
     if (auto t = ctx->trailer()) {
       return stk.call(std::any_cast<std::string>(visitAtom(ctx->atom())), 
-        std::any_cast<FuncArgs>(visitTrailer(t)), this);
+        std::any_cast<FunctionParams>(visitTrailer(t)), this);
     } else {
       auto atm = visitAtom(ctx->atom());
       if (auto t = std::any_cast<std::string>(&atm)) {
@@ -378,7 +379,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     if (auto t = ctx->arglist()) {
       return visitArglist(t);
     } else {
-      return FuncArgs();
+      return FunctionParams();
     }
   }
 
@@ -521,9 +522,9 @@ class EvalVisitor : public Python3ParserBaseVisitor {
 
   std::any visitArglist(Python3Parser::ArglistContext *ctx) override {
     auto args = ctx->argument();
-    FuncArgs ret;
+    FunctionParams ret;
     for (auto arg : args) {
-      ret.push_back(std::any_cast<FunctionArgument>(visitArgument(arg)));
+      ret.push_back(std::any_cast<Argument>(visitArgument(arg)));
     }
     return ret;
   }
@@ -531,9 +532,9 @@ class EvalVisitor : public Python3ParserBaseVisitor {
   std::any visitArgument(Python3Parser::ArgumentContext *ctx) override {
     auto tests = ctx->test();
     if (tests.size() == 1) {
-      return FunctionArgument("", std::any_cast<Value>(visitTest(tests[0])));
+      return Argument("", std::any_cast<Value>(visitTest(tests[0])));
     } else {
-      return FunctionArgument(tests[0]->getText(), std::any_cast<Value>(visitTest(tests[1])));
+      return Argument(tests[0]->getText(), std::any_cast<Value>(visitTest(tests[1])));
     }
   }
 };

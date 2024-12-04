@@ -34,7 +34,7 @@ struct StackHandler {
   void deffunc(const std::string &name, const Function &f) {
     funs.insert(std::make_pair(name, f));
   };
-  std::any call(const std::string &name, const FuncArgs &args, Python3ParserBaseVisitor *v) {
+  std::any call(const std::string &name, const FunctionParams &args, Python3ParserBaseVisitor *v) {
     if (name == "print") {
       if (args.empty()) {
         std::cout << '\n';
