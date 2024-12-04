@@ -61,6 +61,7 @@ struct rValue {
         break;
       }
     }
+    throw;
   };
   explicit operator std::string() const { // WARNING: CHANGE output() ALSO.
     std::stringstream ss;
@@ -114,6 +115,7 @@ struct rValue {
         break;
       }
     }
+    throw;
   };
   explicit operator double() const {
     switch (typ) {
@@ -145,6 +147,7 @@ struct rValue {
         break;
       }
     }
+    throw;
   };
   void output() const { // WARNING: CHANGE operator std::string() ALSO.
     switch (typ) {

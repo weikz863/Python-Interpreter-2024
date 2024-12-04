@@ -95,12 +95,12 @@ class EvalVisitor : public Python3ParserBaseVisitor {
           lValue(std::any_cast<Value>(visitTestlist(testlists[i]))).assign(*ptr);
         }
       } else {
-        auto rhs = std::any_cast<Tuple>(&ret);
+        Tuple rhs = std::any_cast<Tuple>(ret);
         Tuple lhs;
-        for (size_t i = 0; i < testlists.size() - 1; i++) {
+        for (size_t i = testlists.size() - 2; i != 0xfffffffffffffffflu; i--, lhs.swap(rhs)) {
           lhs = std::any_cast<Tuple>(visitTestlist(testlists[i]));
           for (size_t j = 0; j < lhs.size(); j++) {
-            lValue(lhs[j]).assign(rhs->operator[](j));
+            lValue(lhs[j]).assign(rhs[j]);
           }
         }
       }
@@ -122,7 +122,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->MOD_ASSIGN()) {
       return &lValue::mod_assign;
     } else { // ERROR
-      return &lValue::assign;
+      throw;
     }
   }
 
@@ -134,7 +134,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (auto t = ctx->continue_stmt()) {
       return visitContinue_stmt(t);
     } else { // ERROR
-      return FlowControl();
+      throw;
     }
   }
 
@@ -167,7 +167,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (auto t = ctx->funcdef()) {
       return visitFuncdef(t);
     } else { // ERROR
-      return FlowControl();
+      throw;
     }
   }
 
@@ -294,7 +294,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->GT_EQ()) {
       return &rValue::geq;
     } else { // ERROR
-      return 0;
+      throw;
     }
   }
 
@@ -344,7 +344,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->MOD()) {
       return &rValue::mod;
     } else { // ERROR
-      return 0;
+      throw;
     }
   }
 
@@ -434,7 +434,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->format_string()) {
       return visitFormat_string(ctx->format_string());
     } else { // ERROR
-      return 0;
+      throw;
     }
   }
 
@@ -447,8 +447,25 @@ class EvalVisitor : public Python3ParserBaseVisitor {
       if (literals[i]->getSourceInterval().startsBeforeDisjoint(testlists[j]->getSourceInterval())) {
         auto str = literals[i]->getText();
         for (size_t k = 0; k < str.size(); k++) {
-          ret.push_back(str[k]);
-          if (str[k] == '{' || str[k] == '}') k++;
+          if (str[k] == '{' || str[k] == '}' || str[k] == '\\') {
+            k++;
+            switch (str[k]) {
+              case 't' : {
+                ret.push_back('\t');
+                break;
+              }
+              case 'n' : {
+                ret.push_back('\n');
+                break;
+              }
+              case '\\' : case '\'' : case '\"' : case '{' : case '}': default: {
+                ret.push_back(str[k]);
+                break;
+              }
+            }
+          } else {
+            ret.push_back(str[k]);
+          }
         }
         i++;
       } else {
@@ -458,12 +475,29 @@ class EvalVisitor : public Python3ParserBaseVisitor {
       }
     }
     while (i < literals.size()) {
-      auto str = literals[i]->getText();
-      for (size_t k = 0; k < str.size(); k++) {
-        ret.push_back(str[k]);
-        if (str[k] == '{' || str[k] == '}') k++;
-      }
-      i++;
+        auto str = literals[i]->getText();
+        for (size_t k = 0; k < str.size(); k++) {
+          if (str[k] == '{' || str[k] == '}' || str[k] == '\\') {
+            k++;
+            switch (str[k]) {
+              case 't' : {
+                ret.push_back('\t');
+                break;
+              }
+              case 'n' : {
+                ret.push_back('\n');
+                break;
+              }
+              case '\\' : case '\'' : case '\"' : case '{' : case '}': default: {
+                ret.push_back(str[k]);
+                break;
+              }
+            }
+          } else {
+              ret.push_back(str[k]);
+          }
+        }
+        i++;
     }
     while (j < testlists.size()) {
       ret.append(std::string(rValue(std::any_cast<Value>(visitTestlist(testlists[j])))));
