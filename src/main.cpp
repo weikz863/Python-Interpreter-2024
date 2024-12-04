@@ -2,7 +2,6 @@
 #include "Python3Lexer.h"
 #include "Python3Parser.h"
 #include "antlr4-runtime.h"
-#include <iostream>
 using namespace antlr4;
 // TODO: regenerating files in directory named "generated" is dangerous.
 //       if you really need to regenerate,please ask TA for help.

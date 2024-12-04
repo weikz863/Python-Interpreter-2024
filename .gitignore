@@ -1,9 +1,11 @@
 # IDE files
 .idea/
+.cache/
 cmake-build-debug/
 build/
 gen/
 antlr-playground/.antlr
 resources/.antlr
 # Testcases
-testcases/hidden-testcases
+testcases/
+2515

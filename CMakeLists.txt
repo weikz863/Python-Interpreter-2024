@@ -1,8 +1,9 @@
 ### YOU CAN'T MODIFY THE CODE BELOW
 cmake_minimum_required(VERSION 3.15.2)
 project(python_interpreter)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include_directories(/usr/include/antlr4-runtime/)
 include_directories(
