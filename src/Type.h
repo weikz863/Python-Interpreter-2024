@@ -100,7 +100,10 @@ struct rValue {
         break;
       }
       case Type::Float : {
-        return static_cast<int2048>(static_cast<long long>(std::any_cast<double>(val)));
+        std::stringstream ss;
+        int2048 ret;
+        ss << std::fixed << std::setprecision(0) << std::any_cast<double>(val);
+        return ret;
         break;
       }
       case Type::Str : {
