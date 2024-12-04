@@ -208,7 +208,7 @@ struct rValue {
       return rValue(std::any_cast<std::string>(val) +
           std::any_cast<std::string>(x.val));
     } else {
-      return rValue();
+      throw;
     }
   };
   rValue minus(rValue x) {
@@ -227,7 +227,7 @@ struct rValue {
       return rValue(static_cast<double>(std::any_cast<int2048>(val)) - 
           std::any_cast<double>(x.val));
     } else {
-      return rValue();
+      throw;
     }
   };
   rValue times(rValue x) {
@@ -253,7 +253,7 @@ struct rValue {
       }
       return rValue(ret);
     } else {
-      return rValue();
+      throw;
     }
   };
   rValue div(rValue x) {
@@ -272,7 +272,7 @@ struct rValue {
       return rValue(static_cast<double>(std::any_cast<int2048>(val)) /
           std::any_cast<double>(x.val));
     } else {
-      return rValue();
+      throw;
     }
   };
   rValue idiv(rValue x) {
@@ -291,7 +291,7 @@ struct rValue {
       return rValue(static_cast<double>(std::any_cast<int2048>(val)) / 
           std::floor(std::any_cast<double>(x.val)));
     } else {
-      return rValue();
+      throw;
     }
   };
   rValue mod(rValue x) {
@@ -315,6 +315,8 @@ struct rValue {
     } else if (typ == Type::Str && x.typ == Type::Str) { // end str
       return rValue(std::any_cast<std::string>(val) ==
           std::any_cast<std::string>(x.val));
+    } else if (typ == Type::None && x.typ == Type::None) {
+      return rValue(true);
     } else {
       return rValue(false);
     }
