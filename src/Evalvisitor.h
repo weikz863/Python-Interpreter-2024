@@ -148,7 +148,12 @@ class EvalVisitor : public Python3ParserBaseVisitor {
 
   std::any visitReturn_stmt(Python3Parser::Return_stmtContext *ctx) override {
     if (auto t = ctx->testlist()) {
-      return FlowControl(std::any_cast<Value>(visitTestlist(t)));
+      auto ret = visitTestlist(t);
+      if (auto ptr = std::any_cast<Value>(&ret)) {
+        return FlowControl(*ptr);
+      } else {
+        return FlowControl(std::any_cast<Tuple>(ret));
+      }
     } else {
       return FlowControl(FlowControl::Type::RETURN);
     }
@@ -207,10 +212,8 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else {
       auto stmts = ctx->stmt();
       FlowControl ret;
-      std::any tmp;
       for (auto stmt : stmts) {
-        tmp = visitStmt(stmt);
-        ret = std::any_cast<FlowControl>(tmp);
+        ret = std::any_cast<FlowControl>(visitStmt(stmt));
         if (ret.typ != FlowControl::Type::REGULAR) return ret;
       }
       return FlowControl();
@@ -297,6 +300,9 @@ class EvalVisitor : public Python3ParserBaseVisitor {
 
   std::any visitArith_expr(Python3Parser::Arith_exprContext *ctx) override {
     auto terms = ctx->term();
+    if (terms.size() == 1) {
+      return visitTerm(terms[0]);
+    }
     auto val = std::any_cast<Value>(visitTerm(terms[0]));
     auto ops = ctx->addorsub_op();
     for (size_t i = 1; i < terms.size(); i++) {
@@ -316,6 +322,9 @@ class EvalVisitor : public Python3ParserBaseVisitor {
 
   std::any visitTerm(Python3Parser::TermContext *ctx) override {
     auto factors = ctx->factor();
+    if (factors.size() == 1) {
+      return visitFactor(factors[0]);
+    }
     auto val = std::any_cast<Value>(visitFactor(factors[0]));
     auto ops = ctx->muldivmod_op();
     for (size_t i = 1; i < factors.size(); i++) {
@@ -392,7 +401,25 @@ class EvalVisitor : public Python3ParserBaseVisitor {
       for (auto s : t) {
         tmp = s->getText();
         for (size_t i = 1; i + 1 < tmp.size(); i++){
-          ret.push_back(tmp[i]);
+          if (tmp[i] != '\\') {
+            ret.push_back(tmp[i]);
+          } else {
+            i++;
+            switch (tmp[i]) {
+              case 't' : {
+                ret.push_back('\t');
+                break;
+              }
+              case 'n' : {
+                ret.push_back('\n');
+                break;
+              }
+              case '\\' : case '\'' : case '\"' : default: {
+                ret.push_back(tmp[i]);
+                break;
+              }
+            }
+          }
         }
       }
       return Value(rValue(ret));

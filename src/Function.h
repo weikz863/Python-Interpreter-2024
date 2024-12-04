@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <string>
 #ifndef PYTHON_INTERPRETER_FUNCTION_H
 #define PYTHON_INTERPRETER_FUNCTION_H
@@ -18,6 +19,9 @@ struct FlowControl {
     ;
   };
   FlowControl(Value val) : typ(Type::RETURN), ret(val) {
+    ;
+  };
+  FlowControl(Tuple val) : typ(Type::RETURN), ret(val) {
     ;
   };
 };
