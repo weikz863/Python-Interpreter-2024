@@ -92,8 +92,11 @@ class EvalVisitor : public Python3ParserBaseVisitor {
       auto testlists = ctx->testlist();
       auto ret = visitTestlist(testlists.back());
       if (auto ptr = std::any_cast<Value>(&ret)) {
-        for (size_t i = 0; i < testlists.size() - 1; i++) {
-          lValue(std::any_cast<Value>(visitTestlist(testlists[i]))).assign(*ptr);
+        Value rhs = *ptr;
+        Value lhs;
+        for (size_t i = testlists.size() - 2; i != 0xfffffffffffffffflu; i--, lhs.swap(rhs)) {
+          lhs = std::any_cast<Value>(visitTestlist(testlists[i]));
+          lValue(lhs).assign(rhs);
         }
       } else {
         Tuple rhs = std::any_cast<Tuple>(ret);

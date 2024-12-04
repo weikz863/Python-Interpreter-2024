@@ -288,8 +288,8 @@ struct rValue {
       return rValue(std::floor(std::any_cast<double>(val) / 
           static_cast<double>(std::any_cast<int2048>(x.val))));
     } else if (typ == Type::Int && x.typ == Type::Float) { // end float
-      return rValue(static_cast<double>(std::any_cast<int2048>(val)) / 
-          std::floor(std::any_cast<double>(x.val)));
+      return rValue(std::floor(static_cast<double>(std::any_cast<int2048>(val)) / 
+          std::any_cast<double>(x.val)));
     } else {
       throw;
     }
@@ -419,6 +419,9 @@ struct Value {
   };
   operator lValue() {
     return std::any_cast<lValue>(val);
+  };
+  void swap(Value t) {
+    val.swap(t.val);
   };
 };
 
