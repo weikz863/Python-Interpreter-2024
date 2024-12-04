@@ -53,7 +53,7 @@ struct rValue {
         break;
       }
       case Type::Str : {
-        return std::any_cast<std::string>(val) == "";
+        return std::any_cast<std::string>(val) != "";
         break;
       }
       case Type::Bool : {
