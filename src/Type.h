@@ -62,7 +62,7 @@ struct rValue {
         break;
       }
     }
-    exit(0);
+    throw;
   };
   explicit operator std::string() const { // WARNING: CHANGE output() ALSO.
     std::stringstream ss;
@@ -120,7 +120,7 @@ struct rValue {
         break;
       }
     }
-    exit(0);
+    throw;
   };
   explicit operator double() const {
     switch (typ) {
@@ -152,7 +152,7 @@ struct rValue {
         break;
       }
     }
-    exit(0);
+    throw;
   };
   void output() const { // WARNING: CHANGE operator std::string() ALSO.
     switch (typ) {
@@ -210,7 +210,7 @@ struct rValue {
       return rValue(std::any_cast<std::string>(val) +
           std::any_cast<std::string>(x.val));
     } else {
-      exit(0);
+      throw;
     }
   };
   rValue minus(rValue x) {
@@ -229,7 +229,7 @@ struct rValue {
       return rValue(static_cast<double>(std::any_cast<int2048>(val)) - 
           std::any_cast<double>(x.val));
     } else {
-      exit(0);
+      throw;
     }
   };
   rValue times(rValue x) {
@@ -255,7 +255,7 @@ struct rValue {
       }
       return rValue(ret);
     } else {
-      exit(0);
+      throw;
     }
   };
   rValue div(rValue x) {
@@ -274,7 +274,7 @@ struct rValue {
       return rValue(static_cast<double>(std::any_cast<int2048>(val)) /
           std::any_cast<double>(x.val));
     } else {
-      exit(0);
+      throw;
     }
   };
   rValue idiv(rValue x) {
@@ -293,7 +293,7 @@ struct rValue {
       return rValue(std::floor(static_cast<double>(std::any_cast<int2048>(val)) / 
           std::any_cast<double>(x.val)));
     } else {
-      exit(0);
+      throw;
     }
   };
   rValue mod(rValue x) {
