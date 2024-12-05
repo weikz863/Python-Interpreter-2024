@@ -126,7 +126,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->MOD_ASSIGN()) {
       return &lValue::mod_assign;
     } else { // ERROR
-      throw;
+      exit(0);
     }
   }
 
@@ -138,7 +138,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (auto t = ctx->continue_stmt()) {
       return visitContinue_stmt(t);
     } else { // ERROR
-      throw;
+      exit(0);
     }
   }
 
@@ -171,7 +171,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (auto t = ctx->funcdef()) {
       return visitFuncdef(t);
     } else { // ERROR
-      throw;
+      exit(0);
     }
   }
 
@@ -298,7 +298,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->GT_EQ()) {
       return &rValue::geq;
     } else { // ERROR
-      throw;
+      exit(0);
     }
   }
 
@@ -348,7 +348,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->MOD()) {
       return &rValue::mod;
     } else { // ERROR
-      throw;
+      exit(0);
     }
   }
 
@@ -438,7 +438,7 @@ class EvalVisitor : public Python3ParserBaseVisitor {
     } else if (ctx->format_string()) {
       return visitFormat_string(ctx->format_string());
     } else { // ERROR
-      throw;
+      exit(0);
     }
   }
 
