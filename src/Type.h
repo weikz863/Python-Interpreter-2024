@@ -1,8 +1,9 @@
 #pragma once
-#include <cstdlib>
+
 #ifndef PYTHON_INTERPRETER_TYPE_H
 #define PYTHON_INTERPRETER_TYPE_H
 
+#include <cstdlib>
 #include <any>
 #include <iostream>
 #include <iomanip>
@@ -250,6 +251,13 @@ struct rValue {
     } else if (typ == Type::Str && x.typ == Type::Int) { // end str
       std::string ret(""), app(std::any_cast<std::string>(val));
       int2048 times(std::any_cast<int2048>(x.val));
+      for (int i = 1; i <= times; i++) {
+        ret.append(app);
+      }
+      return rValue(ret);
+    } else if (typ == Type::Int && x.typ == Type::Str) { // what?
+      std::string ret(""), app(std::any_cast<std::string>(x.val));
+      int2048 times(std::any_cast<int2048>(val));
       for (int i = 1; i <= times; i++) {
         ret.append(app);
       }
