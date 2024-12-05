@@ -102,7 +102,8 @@ struct rValue {
       case Type::Float : {
         std::stringstream ss;
         int2048 ret;
-        ss << std::fixed << std::setprecision(0) << std::any_cast<double>(val);
+        ss << std::fixed << std::setprecision(0) << std::trunc(std::any_cast<double>(val));
+        ss >> ret;
         return ret;
         break;
       }
